@@ -8,7 +8,7 @@ DOM que van a dibujar la gráfica, cuando se vuelve a llamar `data()` con nuevos
 Cada componente requiere los datos como conjuntos de filas leidos de un csv con `d3.csv`:
 
 ````javascript
-[
+var datos = [
   {"Year": "1997", "Make": "Ford", "Model": "E350", "Length": "2.34"},
   {"Year": "2000", "Make": "Mercury", "Model": "Cougar", "Length": "2.38"}
 ]
@@ -16,6 +16,40 @@ Cada componente requiere los datos como conjuntos de filas leidos de un csv con 
 
 internamente, cada componente organiza los datos de acuerdo a su propia representación. 
 
+## Uso
+
+De acuerdo al patrón con el que están desarrollados los componentes, la forma general de utilizarlos depende poco de la
+gráfica en específico. Pra crear una gráfica, siempre el primer paso es crear la instancia y darle valor a sus propiedades
+(aquí se ilustra con una gráfica de barras pero el patrón general es el mismo):
+
+````javascript
+var bar = stackedBarChart()
+    .width(400)
+    .height(400)
+    .stackVariables(["grado_ferrocarril", "grado_carretera"])
+    .displayName("nom_ciudad")
+    .id("id");
+````
+Cada uno de los métodos (_getters_ y _setters_) regresa el objeto original, entonces es posible encadenar los métodos para dar valor a las propiedades.
+
+Para unir los datos a la gráfica, se llama el método `data(datos)`:
+
+````javascript
+bar.data(datos)
+````
+Finalmente, para desplegar la gráfica, se usa el método `call` de una selección de d3 con la instancia como argumento:
+
+````javascript
+d3.select("#chart")
+  .call(bar);
+````
+Actualizar una gráfica consiste simplemente en llamar al método `data(nuevosDatos)` con un nuevo conjunto de datos:
+
+````javascript
+bar.data(newData);
+````
+Internamente la implementación se encarga de actualizar el dibujo, manejar los nuevos elementos, eliminar los que
+ya no están presentes (la unión se hace implícitamente a trvés de la propiedad `id`).
 
 ## Gráfica de _Stacked Bars_
 
