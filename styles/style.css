@@ -1,0 +1,226 @@
+:root {
+    --main-bg-color: #262626;
+    --main-text-color: #b2b2b2;
+}
+
+@font-face {
+	font-family: 'DINMedium';
+	src: url('./DINMedium.eot');
+	src: local('DINMedium'), url('./DINMedium.woff') format('woff'), url('./DINMedium.ttf') format('truetype');
+}
+
+body {
+    /*font-family: 'proxima-nova', sans-serif;*/
+    font-family: 'DINMedium' !important;
+    background-color: var(--main-bg-color);
+}
+
+#header {
+    font-size: 2em;
+    color: var(--main-text-color);
+    height: 100px;
+}
+
+#middle {
+    height: 854px;
+    color: var(--main-text-color);
+}
+
+#footer {
+    height: 100px;
+}
+
+#footer .col {
+    text-align:center;
+}
+
+.table > tbody > tr > td {
+    vertical-align: middle;
+}
+
+.table > thead > tr > th {
+    text-align: center;
+}
+
+
+#story {
+    height: 854px; 
+    opacity: 0.75;
+    position: absolute;
+    background-color: var(--main-bg-color);
+    z-index: 2 !important;
+    -webkit-box-shadow: -15px 0px 5px -5px rgba(128,121,128,1); 
+    -moz-box-shadow: -15px 0px 5px -5px rgba(128,121,128,1); 
+    box-shadow: -15px 0px 5px -5px rgba(128,121,128,1); 
+    left: 50%;
+    width: 50%
+}
+
+#mapdiv, #overlaydiv {
+    height: 854px;
+    z-index:1;
+    background-color: var(--main-bg-color);
+}
+
+.icon-previous{
+    /* color: #333;
+    font-style: normal;
+    font-weight: 400;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;*/
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /*font-size: 32px;*/
+    margin-bottom: 5px;
+    /* border-bottom-right-radius: 7px; */
+    /* border-top-right-radius: 7px; */
+    /* border-left: 0; */
+    /* background-color: var(--main-text-color); */
+    /* padding */
+    /* : 20px; */
+    /* border: 1px solid #b3b3b3; */
+    cursor: pointer;
+    /* position: absolute; */
+    /* top: 300px; */
+    /* left: 0px; */
+    z-index: 2;
+    -webkit-transition: text-shadow 1s; /* For Safari 3.1 to 6.0 */
+    transition: text-shadow 1s;
+}
+.icon-next{
+    /* color: #333;
+    font-style: normal;
+    font-weight: 400;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;*/
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /*font-size: 32px;*/
+    margin-bottom: 5px;
+    /* border-bottom-left-radius: 7px; */
+    /* border-top-left-radius: 7px; */
+    /* border-left: 0; */
+    /* background-color: var(--main-text-color); */
+    /* padding: 20px; */
+    /* border: 1px solid #b3b3b3; */
+    cursor: pointer;
+    /* position: absolute; */
+    /* top: 300px; */
+    /* right: 0px; */
+    z-index: 2;
+    -webkit-transition: text-shadow 0.5s; /* For Safari 3.1 to 6.0 */
+    transition: text-shadow 0.5s;
+}
+
+.icon-next:hover, .icon-previous:hover{
+    //color: #81152a;
+    text-shadow: 0 0 10px #e72662;
+}
+
+.icon-disabled:hover {
+    cursor: default;
+    text-shadow: 0 0 0px #6c757d;
+}
+
+.menu {
+    font-size: 14px;
+    padding: 6px 12px 6px 12px;
+    /*background-color: rgba(217,217,217,0.9);*/
+    /*background-color: var(--main-text-color);*/
+    background-color: var(--main-text-color);
+    cursor: pointer;
+    font-weight: bold;
+    /*color: #737373;*/
+    color: #333;
+    position: absolute;
+    z-index: 3;
+    right: 0px;
+    top: -32px;
+    text-align: left;
+    overflow: hidden;
+    /*border-bottom: 1px solid #e6e6e6;
+    border-right: 1px solid #e6e6e6;
+    border-left: 1px solid #e6e6e6;*/
+    /*border-bottom-right-radius: 7px;
+    border-bottom-left-radius: 7px;*/
+    border-bottom-left-radius: 7px;
+    border-top-left-radius: 7px;
+}
+.menu:hover {
+    /*background: #c34528;*/
+    background: #81152a;
+    color: var(--main-text-color);
+}
+
+.regionStyle {
+    transition: -webkit-filter 0.5s, filter 0.5s;
+    -webkit-filter: invert(0%);
+    filter: invert(0%);
+}
+.regionStyle:hover {
+    transition: -webkit-filter 0.5s, filter 0.5s;
+    -webkit-filter: invert(100%);
+    filter: invert(100%);
+}
+
+.regionZoomed {
+    stroke-width: 2;
+    stroke-opacity: 0.5;
+    stroke: #81152a;
+    fill-opacity: 0.0;
+}
+.bar {
+}
+
+.bar-avg {
+    /*stroke: blue;*/
+}
+.bar-avg:hover {
+    fill: brown;
+}
+
+.bar:hover {
+  fill: brown;
+}
+
+.tick text {
+    fill: var(--main-text-color);
+}
+
+.axis {
+    font-family: "DINMedium";
+    font-size: 11px;
+}
+
+.axis--y path {
+    stroke: var(--main-text-color); 
+}
+
+.axis--y text {
+    fill: var(--main-text-color); 
+}
+ 
+.axis--x path {
+    stroke: none;
+}
+
+.tick line {
+    stroke: var(--main-text-color);
+}
+
+.legend {
+    font-size: 11px;
+}
+.legend text {
+    fill: var(--main-text-color);
+}
+
+.axisLabel {
+    fill: var(--main-text-color);
+}
+
+.axis .legend {
+    fill: var(--main-text-color);
+}
