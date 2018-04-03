@@ -1,0 +1,131 @@
+<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="styles/style.css" rel="stylesheet">
+  </head>
+  <body>
+    <button type="button" onclick="actualiza()">actualiza</button>
+    <div id="chart"> </div>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3-queue.v3.min.js"></script>
+    <script src="components/radarChart.js"></script>
+    <script>
+      var currentRegion = 0,
+          allData,
+          radar;      
+          
+      d3.csv("data/variables-potencial-industrial.csv",
+             function(error, vars){
+                 if (error) throw error;
+                 // Parse data as numbers
+
+
+                 // Aquí se leen los datos y se procesan
+                 // No es muy importante para el funcionamiento de la gráfica.
+                 data = [];
+                 vars.forEach(function(d) {
+                     data.push({
+                         id: d.id, 
+                         nom_ciudad: d.nom_ciudad,
+                         zona: d.zona,
+                         "Legal System": +d.sis_dere,
+                         "Environment": +d.man_ambi,
+                         "Inclusive Society": +d.soc_incl,
+                         "Efficent Government": +d.gob_efic,
+                         "Market Factors": +d.merc_fac,
+                         "Economic Stability": +d.eco_esta,
+                         "Infrastructure": +d.precur,
+                         "International Relationships": +d.rela_inte,
+                         "Economic Innovation": +d.inno_eco,
+                         "Political System": +d.sis_poli
+                     });
+                 });
+
+                 var imcoAvgs = {
+                     "id": -1,
+                     "nom_ciudad": "National Averages",
+                     "zona": "National",
+                     "Legal System": d3.mean(vars,function(d) {
+                         return d.sis_dere;
+                     }),
+                     "Political System": d3.mean(vars,function(d) {
+                         return d.man_ambi;
+                     }),
+                     "Environment": d3.mean(vars,function(d) {
+                         return d.soc_incl;
+                     }),
+                     "Inclusive Society": d3.mean(vars,function(d) {
+                         return d.sis_poli;
+                     }),
+                     "Efficient Government": d3.mean(vars,function(d) {
+                         return d.gob_efic;
+                     }),
+                     "Market Factors": d3.mean(vars,function(d) {
+                         return d.merc_fac;
+                     }),
+                     "Economic Stability": d3.mean(vars,function(d) {
+                         return d.eco_esta;
+                     }),
+                     "Infrastructure": d3.mean(vars,function(d) {
+                         return d.precur;
+                     }),
+                     "International Relationships": d3.mean(vars,function(d) {
+                         return d.rela_inte;
+                     }),
+                     "Economic Innovation": d3.mean(vars,function(d) {
+                         return d.inno_eco;
+                     })  
+                 };
+
+                 var cityNames = [];
+                 vars.forEach(function(e) {
+                      cityNames.push(e.nom_ciudad);
+                 });
+                 
+                 // Se crea la instancia y se da valor a las propiedades
+                 // Las propiedades obligatorias son.
+                 // displayName (string): La columna en los datos que
+                 // distingue las series.
+                 // id: columna que sirve como identificador único
+                 radar = radarChart()
+                     .width(400)
+                     .height(400)
+                     .displayName("nom_ciudad")
+                     .id("id")
+                     .color(d3.scaleOrdinal()
+                            .domain(cityNames).range(d3.schemeCategory20))
+                     .legend({ title: '', translateX: 100, translateY: 0 });
+
+                 data.push(imcoAvgs);
+                 allData = data;
+
+                 // Asociar datos a la gráfica
+                 radar.data([imcoAvgs]); // bind data to chart object
+                 d3.select("#chart")
+                     .call(radar); // Draw chart in selected div
+             });
+      
+      var idToName = {
+          1 : "Noreste",
+          2 : "Centro-Occidente",
+          3 : "Megalopolis",
+          4 : "Noroeste",
+          5 : "Golfo Oriente",
+          6 : "Centro Norte",
+          7 : "Peninsula"
+      };
+
+      function actualiza(){
+          currentRegion ++;
+          newData = allData.filter(function(el){
+              return el.zona === idToName[currentRegion] || el.zona === "National";
+          });
+          // Para actualizar simplemente se llama el método data() con
+          // los nuevos datos.
+          radar.data(newData);
+      }
+    </script>
+
+  </body>
+</html>
