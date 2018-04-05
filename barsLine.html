@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link href="styles/style.css" rel="stylesheet">
+  </head>
+  <body>
+    <button type="button" onclick="actualiza()">actualiza</button>
+    <div id="chart"> </div>
+    <div id="explanation">
+      <h1>Ejemplo de uso de la gráfica de Stacked Bars</h1>
+      El script en este archivo muesra la funcionalidad básica.
+    </div>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3-queue.v3.min.js"></script>
+    <script src="components/barLineChart.js"></script>
+    <script>
+      var currentRegion = 0,
+          allData;
+
+      // Se inicializa la gráfica llamando stackedBarChart()
+      // Cada opción se fija llamando al método correspondiente con
+      // el valor como argumento.
+      // Las opciones obligatorias son:
+      // stackVariables (array) Los nombres de las variables para construir los stacks
+      // displayName (string) La columna con los nombres para el eje x
+      // id Un identificador único para bcada fila
+      var bar = barLineChart()
+          .width(500)
+          .height(400)
+          .barsVariables(["Labor market size", "IKAs market"])
+          .lineVariables(["IKAs Percentage"])
+          .displayName("Urban region")
+          .id("Urban region");
+          
+
+      d3.csv("data/bars_line.csv",
+             function(error, vars){
+                 if (error) throw error;
+                 // Parse data as numbers
+                 data = [];
+                 vars.forEach(function(d) {
+                     data.push({
+                         region: d["Urban region"],
+                         "Labor market size": +d["Labor market size"], 
+                         "IKAs market": +d["IKAs market"],
+                         "IKAs Percentage": +d["IKAs Percentage"]
+                     });
+                 });
+
+
+                 //console.log(data.region);
+                 // allData = data;
+
+                 // var chartData = data.sort(function(x,y){
+                 //     return d3.descending(+x.grado_total, +y.grado_total);
+                 // }).slice(0, 14);
+                 // Con los datos leídos del csv (parseados como números)
+                 // se llama a método data para unir los datos con la gráfica
+                 bar.data(data); // bind data to chart object
+                 // Con una selección sobre el contenedor de la gráfica,
+                 // se llama al método call(bar) para dibujar la gráfica.
+                 d3.select("#chart")
+                     .call(bar); // Draw chart in selected div
+             });
+      
+      // function actualiza(){
+      //     currentRegion ++;
+      //     newData = allData.filter(function(el){
+      //         return el.zona == "Peninsula";})
+      //     // Para actualizar la gráfica, simplemente se llama a data() con
+      //     // los nuevos datos.
+      //     bar.data(newData);
+      // }
+    </script>
+
+  </body>
+</html>
+            
