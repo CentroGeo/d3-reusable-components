@@ -7,7 +7,7 @@ function barLineChart(){
         barsVariables, // list of variables to display as bars
         lineVariables, // list of variables to display as lines
         displayName, // // variable in data to use as x axis labels
-        transitionTime = 250,
+        transitionTime = 500,
         color = d3.scaleOrdinal(d3.schemeCategory10),	//Color function,
         barColor = d3.scaleOrdinal(d3.schemeCategory10), //bar Color function
         leftAxisFormat = '.2s',
@@ -56,6 +56,7 @@ function barLineChart(){
                 .attr("class", "multiBar");
 
             var g = svg.append("g")
+                .attr("class", "g-bar")
                 .attr("transform", "translate(" + margin.right + "," +
                        margin.top + ")");
 
@@ -97,7 +98,7 @@ function barLineChart(){
 
             // Points for line data (JUST ONE LINE)
             var points = g.selectAll("circle.point")
-                .data(data)
+                .data(data, function(d){ return d[id]; })
                 .enter()
                 .append("circle")
                 .attr("class", "point")
@@ -115,28 +116,26 @@ function barLineChart(){
                 });
             
             // Add the X Axis
+            var xAxis = d3.axisBottom(xLine)
             g.append("g")
                 .attr("transform", "translate(0," + height + ")")
                 .attr("class", "x-axis")
-                .call(d3.axisBottom(xLine));
+                .call(xAxis);
 
+            var leftAxis = d3.axisLeft(yBar).tickFormat(d3.format(leftAxisFormat));
+            var rightAxis = d3.axisRight(yLine).tickFormat(d3.format(rightAxisFormat));
             // Add the Y0 Axis
             g.append("g")
-                .attr("class", "axis-left")
-                .attr("class", "axisSteelBlue")
-                .call(d3.axisLeft(yBar)
-                      .tickFormat(d3.format(leftAxisFormat)));
+                .attr("class", "axis-left axisSteelBlue")
+                .call(leftAxis);
 
             // Add the Y1 Axis
             g.append("g")
-                .attr("class", "axis-right")
-                .attr("class", "axisRed")
+                .attr("class", "axis-right axisRed")
                 .attr("transform", "translate( " + width + ", 0 )")
-                .call(d3.axisRight(yLine)
-                      .tickFormat(d3.format(rightAxisFormat)));
+                .call(rightAxis);
 
             updateData = function(){
-                //console.log(data)
                 // Scale the range of the data
                 xBar.domain(data.map(function(d) {return d[displayName]; }));
                 xGroups.domain(barsVariables).rangeRound([0, xBar.bandwidth()]);
@@ -151,7 +150,11 @@ function barLineChart(){
                     return d[lineVariables[0]];
                 })]).nice();
 
-                var barGroups = d3.selectAll(".bars")
+                valueline = d3.line()
+                    .x(function(d) { return xLine(d[displayName]); })
+                    .y(function(d) { return yLine(d[lineVariables[0]]); });
+
+                var barGroups = d3.select(".g-bar").selectAll(".bars")
                     .data(data, function(d){return d[id]});
 
                 //console.log(barGroups.data())
@@ -160,18 +163,18 @@ function barLineChart(){
                     rightAxisUpdate = d3.select(".axis-right");
                 
                 leftAxisUpdate
-                    .transition(500)
-                    .call(d3.axisLeft(yBar)
-                          .tickFormat(d3.format(leftAxisFormat)));
+                    .transition(transitionTime)
+                    .call(leftAxis);
                 rightAxisUpdate
-                    .transition(500)
-                    .call(d3.axisRight(yLine)
-                          .tickFormat(d3.format(rightAxisFormat)));
+                    .transition(transitionTime)
+                    .call(rightAxis);
+                xAxisUpdate
+                    .transition(transitionTime)
+                    .call(xAxis);
 
                 var barGroupsEnter = barGroups.enter()
                     .append("g")
                     .attr("id", function(d){
-                        console.log(d)
                         return d[displayName]
                     })
                     .attr("transform", function(d) {
@@ -192,7 +195,44 @@ function barLineChart(){
                     .attr("y", function(d) { return yBar(d.value); })
                     .attr("height", function(d) { return height - yBar(d.value); })
                     .attr("fill", function(d) { return barColor(d.key); });
- 
+
+                barGroups.exit().remove();
+
+                var lineUpdate = d3.select(".g-bar").select(".line")
+                    .data([data])
+                    .transition(transitionTime)
+                    .attr("d", valueline);
+                
+                var points = d3.select(".g-bar").selectAll("circle.point")
+                    .data(data, function(d){ return d[id]; });
+
+                points
+                    .transition(transitionTime)
+                    .attr("cx", function(d){
+                        return xLine(d[displayName]);
+                    })
+                    .attr("cy", function(d){
+                        return yLine(d[lineVariables[0]]);
+                    });
+
+                points.enter()
+                    .append("circle")
+                    .transition(transitionTime)
+                    .attr("class", "point")
+                    .style("stroke", "crimson")
+                    .style("stroke-width", 3)
+  		    .style("fill", "none")
+                    .attr("cx", function(d){
+                        return xLine(d[displayName]);
+                    })
+                    .attr("cy", function(d){
+                        return yLine(d[lineVariables[0]]);
+                    })
+                    .attr("r", function(d){
+                        return 2.5;
+                    });
+                
+                points.exit().transition(transitionTime).remove();
                 
             }
 
@@ -286,6 +326,12 @@ function barLineChart(){
     chart.rightAxisFormat = function(value) {
         if (!arguments.length) return rightAxisFormat;
         rightAxisFormat = value;
+        return chart;
+    };
+
+    chart.transitionTime = function(value) {
+        if (!arguments.length) return transitionTime;
+        transitionTime = value;
         return chart;
     };
 
