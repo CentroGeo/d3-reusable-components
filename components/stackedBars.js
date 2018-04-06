@@ -4,14 +4,17 @@ function stackedBarChart(){
     var data = [],
         width = 350,
         height = 350,
-        //margin = {top: 100, right: 30, bottom: 30, left: 45},
         margin = {top: 40, right: 75, bottom: 60, left: 75},
+        //margin = {top: 100, right: 30, bottom: 30, left: 45},
         stackColors = ['#d8b365','#5ab4ac'], // colour scheme
         stackVariables, // Which variables to stack in bars
         id,  // variable in data to use as identifier
         displayName, // variable in data to use as display name for each bar
         transitionTime = 250,
         floatFormat = d3.format('.1f'),
+        legend = false,
+        //legend = {title: 'title', translateX: 100, translateY: 0, items:['item1','item2']}
+        legendContainer = 'legendZone',
         updateData;
         
     function chart(selection) {
@@ -67,6 +70,10 @@ function stackedBarChart(){
                 .attr("height", height + margin.top + margin.bottom)
                 .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            
+            // layer container variable
+            var legendContainerId = this.id + "-" + legendContainer,
+                barLegendId = this.id + "-barLegend";
             
             var stackedData = getStackedBarData(data, stackVariables);
             x.domain(getxDomain(stackedData));
@@ -149,25 +156,56 @@ function stackedBarChart(){
                 .attr("width", x.bandwidth())
                 .attr("height", function(d,i) {return y(d.start) - y(d.end);});
 
-            var legend = bar.selectAll(".legend")
-                .data(stackVariables.reverse())
-                .enter().append("g")
-                .attr("class", "legend")
-                .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-                //.style("font", "10px sans-serif");
-
-            legend.append("rect")
-                .attr("x", width - 95)
-                .attr("width", 18)
-                .attr("height", 18)
-                .attr("fill", function(d,i){ return stackColors[i];});
-
-            legend.append("text")
-                .attr("x", width - 70)
-                .attr("y", 9)
-                .attr("dy", ".35em")
-                .attr("text-anchor", "start")
-                .text(function(d) { return d; });
+            // Draw legend box and items
+            if (legend !== false & typeof legend === "object") {
+                var legendZone = svg.append('g')
+                                .attr("id", legendContainerId)
+                                .attr("class", "legend");
+                
+                if (legend.title) {
+                    var title = legendZone.append("text")
+                        .attr("class", "title")
+                        .attr('transform',
+                                  `translate(${legend.translateX},${legend.translateY})`)
+                        .attr("x", width - 70)
+                        .attr("y", 10)
+                        .attr("font-size", "12px")
+                        .attr("fill", "#737373")
+                        .text(legend.title);
+                }
+                
+                var barLegend = legendZone.append("g")
+                    .attr("id", barLegendId)
+                    .attr("class", "legend")
+                    .attr("height", 100)
+                    .attr("width", 200)
+                    .attr('transform',
+                          `translate(${legend.translateX},${legend.translateY + 5})`);
+                
+                // Create rectangles markers
+                barLegend.selectAll('rect')
+                    .data(legend.items.reverse())
+                    .enter()
+                    .append("rect")
+                    .attr("x", width - 55)
+                    .attr("y", function(d, i){return i * 20 + 20; })
+                    .attr("width", 10)
+                    .attr("height", 10)
+                    .attr("fill", function(d, i){ return stackColors[i];})
+                
+                // Create labels
+                barLegend.selectAll('text')
+                    .data(legend.items.reverse())
+                    .enter()
+                    .append("text")
+                    .attr("x", width - 40)
+                    .attr("y", function(d, i){return i * 20 + 20; })
+                    .attr("font-size", "11px")
+                    .attr("fill", "#737373")
+                    .attr("dy", ".75em")
+                    .attr("text-anchor", "start")
+                    .text(function(d) { return d; });
+            }
 
             updateData = function(){
                 var stackedData = getStackedBarData(data, stackVariables);
@@ -283,6 +321,18 @@ function stackedBarChart(){
         return chart;
     };
 
+    chart.legend = function(value) {
+        if (!arguments.length) return legend;
+        legend = value;
+        return chart;
+    };
+
+    chart.legendContainer = function(value) {
+        if (!arguments.length) return legendContainer;
+        legendContainer = value;
+        return chart;
+    };
+    
     chart.transitionTime = function(value) {
         if (!arguments.length) return transitionTime;
         transitionTime = value;
@@ -290,7 +340,6 @@ function stackedBarChart(){
     };
 
     chart.data = function(value) {
-        
         if (!arguments.length) return data;
         data = value;
         if (typeof updateData === 'function') updateData();
