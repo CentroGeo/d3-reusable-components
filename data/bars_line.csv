@@ -1,8 +1,18 @@
-Urban region,Labor market size,IKAs market,IKAs Percentage
-Megalópolis,11112018,1724986,0.1552360696
-Northeast,3448620,480579,0.1393540025
-Center-west,3159589,459154,0.1453207996
-Center-north,3143954,434660,0.1382526589
-Yucatán peninsula,1240212,153477,0.1237506168
-Northwest,1136887,139085,0.1223384558
-Gulf-east,673913,89698,0.1331002667
+Region,Name,Labor market size,IKAs market,IKAs Percentage
+National,Megalópolis,11112018,1724986,0.1552360696
+National,Northeast,3448620,480579,0.1393540025
+National,Center-west,3159589,459154,0.1453207996
+National,Center-north,3143954,434660,0.1382526589
+National,Yucatán peninsula,1240212,153477,0.1237506168
+National,Northwest,1136887,139085,0.1223384558
+National,Gulf-east,673913,89698,0.1331002667
+Megalópolis, Valle de México,7992219,1325734,0.2
+Megalópolis, Puebla,1127836,156580,0.1
+Megalópolis, Toluca,759957,95077,0.1
+Megalópolis, Cuernavaca,398753,50640,0.1
+Megalópolis, Pachuca,223664,36421,0.2
+Megalópolis, Tlaxcala,198575,27668,0.1
+Megalópolis, Cuautla,183450,14911,0.1
+Megalópolis, Tulancingo,92181,7619,0.1
+Megalópolis, Tula,75959,5400,0.1
+Megalópolis, Tianguistenco,59424,4936,0.1

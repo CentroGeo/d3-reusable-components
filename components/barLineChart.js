@@ -30,9 +30,9 @@ function barLineChart(){
         var yLine = d3.scaleLinear().range([height, 0]);
         
         // Scale the range of the data
-        xBar.domain(data.map(function(d) {return d.region; }));
+        xBar.domain(data.map(function(d) {return d[displayName]; }));
         xGroups.domain(barsVariables).rangeRound([0, xBar.bandwidth()]);
-        xLine.domain(data.map(function(d) { return d.region; }));
+        xLine.domain(data.map(function(d) { return d[displayName]; }));
 
         // TODO: Just one bar and one line
         // From here on this must be done for each lien and bar variable
@@ -45,7 +45,7 @@ function barLineChart(){
 
         // define the 1st line
         var valueline = d3.line()
-            .x(function(d) { return xLine(d.region); })
+            .x(function(d) { return xLine(d[displayName]); })
             .y(function(d) { return yLine(d[lineVariables[0]]); });
         
         selection.each(function(){
@@ -61,14 +61,15 @@ function barLineChart(){
 
             // Draw bars
             var rect = g.selectAll("g")
-                .data(data, function(d){ return d.region; })
+                .data(data, function(d){ return d[id]; })
                 .enter()
                 .append("g")
+                .attr("class", "bars")
                 .attr("id", function(d){
-                    return d.region
+                    return d[displayName]
                 })
                 .attr("transform", function(d) {
-                    return "translate(" + xBar(d.region) + ",0)"; })
+                    return "translate(" + xBar(d[displayName]) + ",0)"; })
   	        .selectAll("rect")
                 .data(function(d) {
                     return barsVariables.map(function(key) {
@@ -104,7 +105,7 @@ function barLineChart(){
                 .style("stroke-width", 3)
   		.style("fill", "none")
                 .attr("cx", function(d){
-                    return xLine(d.region);
+                    return xLine(d[displayName]);
                 })
                 .attr("cy", function(d){
                     return yLine(d[lineVariables[0]]);
@@ -116,20 +117,84 @@ function barLineChart(){
             // Add the X Axis
             g.append("g")
                 .attr("transform", "translate(0," + height + ")")
+                .attr("class", "x-axis")
                 .call(d3.axisBottom(xLine));
 
             // Add the Y0 Axis
             g.append("g")
+                .attr("class", "axis-left")
                 .attr("class", "axisSteelBlue")
                 .call(d3.axisLeft(yBar)
                       .tickFormat(d3.format(leftAxisFormat)));
 
             // Add the Y1 Axis
             g.append("g")
+                .attr("class", "axis-right")
                 .attr("class", "axisRed")
                 .attr("transform", "translate( " + width + ", 0 )")
                 .call(d3.axisRight(yLine)
                       .tickFormat(d3.format(rightAxisFormat)));
+
+            updateData = function(){
+                //console.log(data)
+                // Scale the range of the data
+                xBar.domain(data.map(function(d) {return d[displayName]; }));
+                xGroups.domain(barsVariables).rangeRound([0, xBar.bandwidth()]);
+                xLine.domain(data.map(function(d) { return d[displayName]; }));
+
+                // TODO: Just one bar and one line
+                // From here on this must be done for each lien and bar variable
+                yBar.domain([0, d3.max(data, function(d) {
+                    return d[barsVariables[0]];
+                })]).nice();
+                yLine.domain([0, d3.max(data, function(d) {
+                    return d[lineVariables[0]];
+                })]).nice();
+
+                var barGroups = d3.selectAll(".bars")
+                    .data(data, function(d){return d[id]});
+
+                //console.log(barGroups.data())
+                var xAxisUpdate = d3.select(".x-axis"),
+                    leftAxisUpdate = d3.select(".axis-left"),
+                    rightAxisUpdate = d3.select(".axis-right");
+                
+                leftAxisUpdate
+                    .transition(500)
+                    .call(d3.axisLeft(yBar)
+                          .tickFormat(d3.format(leftAxisFormat)));
+                rightAxisUpdate
+                    .transition(500)
+                    .call(d3.axisRight(yLine)
+                          .tickFormat(d3.format(rightAxisFormat)));
+
+                var barGroupsEnter = barGroups.enter()
+                    .append("g")
+                    .attr("id", function(d){
+                        console.log(d)
+                        return d[displayName]
+                    })
+                    .attr("transform", function(d) {
+                        return "translate(" + xBar(d[displayName]) + ",0)"; })
+  	            .selectAll("rect")
+                    .data(function(d) {
+                        return barsVariables.map(function(key) {
+                            return {key: key, value: d[key]};
+                        });
+                    })
+                    .enter()
+                    .append("rect")
+                    .attr("class", "bar")
+                    .attr("id", function(d){ return d.key;})
+                    .style("stroke", "none")
+                    .attr("x", function(d){ return xGroups(d.key); })
+                    .attr("width", function(d){ return xGroups.bandwidth(); })
+                    .attr("y", function(d) { return yBar(d.value); })
+                    .attr("height", function(d) { return height - yBar(d.value); })
+                    .attr("fill", function(d) { return barColor(d.key); });
+ 
+                
+            }
 
         })
 

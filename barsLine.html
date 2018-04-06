@@ -30,8 +30,8 @@
           .height(400)
           .barsVariables(["Labor market size", "IKAs market"])
           .lineVariables(["IKAs Percentage"])
-          .displayName("Urban region")
-          .id("Urban region");
+          .displayName("name")
+          .id("name");
           
 
       d3.csv("data/bars_line.csv",
@@ -41,37 +41,33 @@
                  data = [];
                  vars.forEach(function(d) {
                      data.push({
-                         region: d["Urban region"],
+                         region: d["Region"],
+                         name: d["Name"],
                          "Labor market size": +d["Labor market size"], 
                          "IKAs market": +d["IKAs market"],
                          "IKAs Percentage": +d["IKAs Percentage"]
                      });
                  });
-
-
-                 //console.log(data.region);
-                 // allData = data;
-
-                 // var chartData = data.sort(function(x,y){
-                 //     return d3.descending(+x.grado_total, +y.grado_total);
-                 // }).slice(0, 14);
+                 var national = data.filter(function(el){
+                    return el.region === "National" 
+                 });
+                 console.log(national)
                  // Con los datos leídos del csv (parseados como números)
                  // se llama a método data para unir los datos con la gráfica
-                 bar.data(data); // bind data to chart object
+                 bar.data(national); // bind data to chart object
                  // Con una selección sobre el contenedor de la gráfica,
                  // se llama al método call(bar) para dibujar la gráfica.
                  d3.select("#chart")
                      .call(bar); // Draw chart in selected div
              });
       
-      // function actualiza(){
-      //     currentRegion ++;
-      //     newData = allData.filter(function(el){
-      //         return el.zona == "Peninsula";})
-      //     // Para actualizar la gráfica, simplemente se llama a data() con
-      //     // los nuevos datos.
-      //     bar.data(newData);
-      // }
+      function actualiza(){
+           newData = data.filter(function(el){
+               return el.region == "Megalópolis";})
+           // Para actualizar la gráfica, simplemente se llama a data() con
+           // los nuevos datos.
+           bar.data(newData);
+      }
     </script>
 
   </body>
