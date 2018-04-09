@@ -17,13 +17,16 @@ function radarChart(){
         dotRadius = 3, //Size of the colored circles of each blob
         opacityCircles = 0.05, //Opacity of the circles of each blob
         strokeWidth = 1.2, //Width of the stroke around each blob
+        highlightedStrokeWidth = 4, //Width of the stroke around each blob
         roundStrokes = true, //If true the area and stroke will follow a round path (2cardinal-closed)
-        color = d3.scaleOrdinal(d3.schemeCategory10),	//Color function,
+        color = d3.scaleOrdinal(d3.schemeCategory10), //Color function,
         format = '.0f',
         unit = '',
         legend = false,//{ title: '', translateX: 100, translateY: 0 },
         legendContainer = 'legendZone',
-        updateData;
+        updateData,
+        doHighlight, 
+        highlightValue;
 
     function chart(selection){
         const max = Math.max;
@@ -69,7 +72,8 @@ function radarChart(){
             var chartData = [];
             data.forEach(function(d){
                 var currentAxis = {"name": d[displayName],
-                                   "axes": []
+                                   "axes": [], 
+                                   "id": d.id
                                   };
                 d3.keys(d).forEach(function(i){
                     if (i != "id" && i != displayName && i!="zona") {
@@ -102,7 +106,7 @@ function radarChart(){
         var allAxis = formattedData[0].axes.map((i, j) => i.axis), //Name of each axis
             total = allAxis.length, //Number of different axes
             radius = Math.min(width/2, height/2), //Outermost radius
-            angleSlice = Math.PI * 2 / total;	//Width in radians of each "slice"
+            angleSlice = Math.PI * 2 / total;    //Width in radians of each "slice"
 
         //Scale for the radius
         rScale = d3.scaleLinear()
@@ -111,8 +115,10 @@ function radarChart(){
 
         // svg container and g
         selection.each(function(){
+            
             var legendContainerId = this.id + "-" + legendContainer,
-                radarLegendId = this.id + "-radarLegend";
+                radarLegendId = this.id + "-radarLegend",
+                chartId = this.id;
 
             var svg = selection.append("svg")
                 .attr("width", width + 1.5*(margin.left + margin.right))
@@ -215,12 +221,16 @@ function radarChart(){
             var blobWrapper = g.selectAll(".radarWrapper")
                 .data(formattedData, function(d){ return d.name; })
                 .enter().append("g")
-                .attr("class", "radarWrapper");
+                //.attr("class", "radarWrapper")
+                .attr("class", function(d, i){ 
+                    return "radarWrapper" + " wrapper" + d.id; 
+                });
 
             //Append the backgrounds
             blobWrapper
                 .append("path")
                 .attr("class", "radarArea")
+                //.attr("class", function(d, i){ return chartId + "-radarArea-" + i; })
                 .attr("d", d => radarLine(d.axes))
                 .style("fill", (d,i) => color(d))
                 .style("fill-opacity", opacityArea)
@@ -332,7 +342,7 @@ function radarChart(){
                 
                 // Create rectangles markers
                 radarLegend.selectAll('rect')
-                    .data(names, function(d){ return d;})
+                    .data(names, function(d){return d;})
                     .enter()
                     .append("rect")
                     .attr("x", width - 55)
@@ -370,7 +380,7 @@ function radarChart(){
                 var allAxis = formattedData[0].axes.map((i, j) => i.axis), //Name of each axis
                     total = allAxis.length, //Number of different axes
                     radius = Math.min(width/2, height/2), //Outermost radius
-                    angleSlice = Math.PI * 2 / total;	//Width in radians of each "slice"
+                    angleSlice = Math.PI * 2 / total;    //Width in radians of each "slice"
 
                 //Scale for the radius
                 rScale = d3.scaleLinear()
@@ -409,7 +419,10 @@ function radarChart(){
                 
                 //Append the backgrounds
                 var radarWrapperEnter = radarWrapperUpdate.enter().append("g")
-                    .attr("class", "radarWrapper");
+                    //.attr("class", "radarWrapper");
+                    .attr("class", function(d, i){ 
+                        return "radarWrapper" + " wrapper" + d.id; 
+                    });
                 
                 var radarAreaEnter = radarWrapperEnter.append("path")
                     .transition(transitionTime)
@@ -495,6 +508,18 @@ function radarChart(){
                     remove();
             }
             
+            doHighlight = function(){
+                selection.selectAll(".radarWrapper") // get all chart wrappers
+                    .each(function(){ // for each one
+                        d3.select(this) // make it a D3 selection
+                            .select(".radarStroke") // select area to style
+                            .style("stroke-width", function(d){ // set style according to case
+                                return +d.id === highlightValue ?
+                                    highlightedStrokeWidth + "px" :
+                                    strokeWidth + "px"
+                            });
+                    });
+            }
         });
     }
 
@@ -572,13 +597,19 @@ function radarChart(){
         return chart;
     };
 
-    chart.data = function(value) {        
+    chart.data = function(value) {
         if (!arguments.length) return data;
         data = value;
         if (typeof updateData === 'function') updateData();
         return chart;
     };
+    
+    chart.highlight = function(value) {
+        if (!arguments.length) return highlightValue;
+        highlightValue = value;
+        if (typeof doHighlight === 'function') doHighlight();
+        return chart;
+    };
 
     return chart;
-
 }
