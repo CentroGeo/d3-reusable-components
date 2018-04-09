@@ -7,19 +7,69 @@ function stackedBarChart(){
         margin = {top: 40, right: 75, bottom: 60, left: 75},
         //margin = {top: 100, right: 30, bottom: 30, left: 45},
         stackColors = ['#d8b365','#5ab4ac'], // colour scheme
+        lineColors = d3.scaleOrdinal(d3.schemeCategory10),
         stackVariables, // Which variables to stack in bars
+        lineVariables, // list of variables to display as lines
         id,  // variable in data to use as identifier
-        displayName, // variable in data to use as display name for each bar
+        displayName, // variable in data to use as x axis labels
         transitionTime = 250,
         floatFormat = d3.format('.1f'),
+        leftAxisFormat = '.2s',
+        rightAxisFormat = '.0%',
+
         legend = false,
         //legend = {title: 'title', translateX: 100, translateY: 0, items:['item1','item2']}
         legendContainer = 'legendZone',
         updateData;
         
     function chart(selection) {
-        var x = d3.scaleBand().rangeRound([0, width]).paddingInner(0.1);
-        var y = d3.scaleLinear().rangeRound([height - margin.top, 0]);
+        var xBar = d3.scaleBand().rangeRound([0, width]).paddingInner(0.1);
+        var yBar = d3.scaleLinear().range([height, 0]);
+        if(lineVariables != null){
+            var yLine = d3.scaleLinear().rangeRound([height - margin.top, 0]);
+            var xLine = d3.scalePoint().range([0, width]).padding(0.5);            
+        }
+        
+        // Scale the range of the data
+        xBar.domain(data.map(function(d) {return d[displayName]; }));
+        //xGroups.domain(barsVariables).rangeRound([0, xBar.bandwidth()]);
+        xLine.domain(data.map(function(d) { return d[displayName]; }));
+
+        yBar.domain(getxDomain).nice();
+
+        // Get max value for all lines
+
+        var maxVals = [];
+        lineVariables.forEach(function(v){
+            maxVals.push(d3.max(data, function(d){
+                //console.log(d[v])
+                return d[v]
+            }))
+        })
+        console.log(Math.max(...maxVals))
+        yLine.domain([0, Math.max(...maxVals)]).nice();
+        // yLine.domain([0, d3.max(data, function(d) {
+        //     var maxVals = [];
+        //     lineVariables.forEach(function(v){
+        //         maxVals.push(d3.max(data, function(d){
+        //             return d[v]
+        //         }))
+        //     })
+        //     return Math.max(maxVals);
+        // })]).nice();
+        //console.log(maxVals)
+        
+        // valuelines for each line variable
+        if(lineVariables != null){
+            var valuelines = []
+            lineVariables.forEach(function(v){
+                valuelines.push(d3.line()
+                                .x(function(d) { return xLine(d[displayName]); })
+                                .y(function(d) { return yLine(v); })
+                               ) 
+            })
+            
+        }
 
         // Utility functions
         function getxDomain(data){
@@ -45,8 +95,9 @@ function stackedBarChart(){
             var stack = d3.stack();
             var stackedData = [];
             data.forEach(function(e){
-                stackedData.push({"id": e[id],
-                                  "stacks":[{"id": e[id],
+                //console.log(e)
+                stackedData.push({"id": e.id,
+                                  "stacks":[{"id": e.id,
                                              "name": e[displayName],
                                              "start": 0,
                                              "end": +e[stackVariables[0]]
@@ -71,28 +122,30 @@ function stackedBarChart(){
                 .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
             
-            // layer container variable
+            // legend container variable
             var legendContainerId = this.id + "-" + legendContainer,
                 barLegendId = this.id + "-barLegend";
             
             var stackedData = getStackedBarData(data, stackVariables);
-            x.domain(getxDomain(stackedData));
-            y.domain(getyDomain(stackedData));
+            xBar.domain(getxDomain(stackedData));
+            yBar.domain(getyDomain(stackedData))
             
             // draw axes first so bars are on top of them
             xAxis = d3.axisTop()
                 .tickSizeInner(0) // the inner ticks will be of size 0
                 .tickSizeOuter(0)
-                .scale(x),
+                .scale(xBar),
             yAxis = d3.axisLeft()
                 .tickSizeOuter(0)
-                .scale(y);
+                .scale(yBar);
+            yLineAxis = d3.axisRight(yLine).tickFormat(d3.format(rightAxisFormat));
 
-            // g element to keep elements within svg modular
+            // append x axis
             svg.append("g")
                 .attr("class", "axis axis--x")
-                .attr("transform", "translate(0," +  (height -
-                                                      margin.top) + ")")
+                .attr("transform", "translate(0," + height + ")")
+                // .attr("transform", "translate(0," +  (height -
+                //                                       margin.top) + ")")
                 .call(xAxis)
                 .selectAll("text")    
                 .style("text-anchor", "start")
@@ -100,12 +153,19 @@ function stackedBarChart(){
                 .attr("dy", "2em")
                 .attr("transform", "rotate(45)");
 
+            // append line (right side) axis 
+            svg.append("g")
+                .attr("class", "axis-right axisRed")
+                .attr("transform", "translate( " + width + ", 0 )")
+                .call(yLineAxis);
+
+            // append bars (left side) axis
             svg.append("g")
                 .attr("class", "axis axis--y")
                 .call(yAxis.ticks())
                 .append("text")
                 .attr("x", 2)
-                .attr("y", y(y.ticks().pop()))
+                .attr("y", yBar(yBar.ticks().pop()))
                 .attr("dy", "-2em")
                 .attr("dx", "-2em")
                 .attr("text-anchor", "start")
@@ -131,11 +191,11 @@ function stackedBarChart(){
                     // Should be included in configs or something
                     if(d.id == -1){
                         if (i == 1){ // if top bar
-                            return (x.bandwidth() + y(d.start) -
-                                    y(d.end) + ", " + (x.bandwidth()));
+                            return (xBar.bandwidth() + yBar(d.start) -
+                                    yBar(d.end) + ", " + (xBar.bandwidth()));
                         } else if (i == 0){ //if bottom bar
-                            return ("0, " + x.bandwidth() + ", " +
-                                    2 * (y(d.start) - y(d.end) + (x.bandwidth())));
+                            return ("0, " + xBar.bandwidth() + ", " +
+                                    2 * (yBar(d.start) - yBar(d.end) + (xBar.bandwidth())));
                         }
                     } else {
                         return "none";
@@ -150,12 +210,44 @@ function stackedBarChart(){
                 })
                 .attr("stroke-width", 2)
                 .attr("class", "bar")
-                .attr("x", function(d) {return x(d.name);})
-                .attr("y", function(d) {return y(d.end);})
+                .attr("x", function(d) {return xBar(d.name);})
+                .attr("y", function(d) {return yBar(d.end);})
                 .attr("fill", function(d,i) { return stackColors[i];})
-                .attr("width", x.bandwidth())
-                .attr("height", function(d,i) {return y(d.start) - y(d.end);});
+                .attr("width", xBar.bandwidth())
+                .attr("height", function(d,i) {return yBar(d.start) - yBar(d.end);});
 
+            // Add the valueline path.
+            if (lineVariables != null){
+                valuelines.forEach(function (valueline){
+                    svg.append("path")
+                        .data([data])
+                        .attr("class", "line")
+                        .style("stroke", "steelblue")
+                        .attr("fill", "none")
+                        .attr("d", valueline);
+
+                    // Points for line data (JUST ONE LINE)
+                    var points = svg.selectAll("circle.point")
+                        .data(data, function(d){ return d[id]; })
+                        .enter()
+                        .append("circle")
+                        .attr("class", "point")
+                        .style("stroke", "crimson")
+                        .style("stroke-width", 3)
+  		        .style("fill", "none")
+                        .attr("cx", function(d){
+                            return xLine(d[displayName]);
+                        })
+                        .attr("cy", function(d){
+                            return yLine(d[lineVariables[0]]);
+                        })
+                        .attr("r", function(d){
+                            return 2.5;
+                        });                    
+                })
+
+            }
+            
             // Draw legend box and items
             if (legend !== false & typeof legend === "object") {
                 var legendZone = svg.append('g')
@@ -338,6 +430,13 @@ function stackedBarChart(){
         transitionTime = value;
         return chart;
     };
+    
+    chart.lineVariables = function(value) {
+        if (!arguments.length) return lineVariables;
+        lineVariables = value;
+        return chart;
+    };
+
 
     chart.data = function(value) {
         if (!arguments.length) return data;
