@@ -5,7 +5,7 @@ function barLineChart(){
         margin = {top: 40, right: 75, bottom: 60, left: 75},
         id,  // variable in data to use as identifier
         barsVariables, // list of variables to display as bars
-        lineVariables, // list of variables to display as lines
+        lineVariables = null, // list of variables to display as lines
         displayName, // // variable in data to use as x axis labels
         transitionTime = 500,
         color = d3.scaleOrdinal(d3.schemeCategory10),	//Color function,
