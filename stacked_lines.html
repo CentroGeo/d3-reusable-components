@@ -43,7 +43,8 @@
                  vars.forEach(function(d) {
                      data.push({
                          id: d["name"], 
-                          name: d.name, // lowercase
+                         name: d.name, // lowercase
+                         region: d.region,
                          "Pop with bachelor":
                              +d["Pop with bachelor"],
                          "Pop with grad":
@@ -54,19 +55,21 @@
                              +d["Percentage grad"]
                      });
                  });
-                 allData = data;
+                 initialData = data.filter(function(d){
+                     return d.region === "megalopolis"
+                 });
                  // Con los datos leídos del csv (parseados como números)
                  // se llama a método data para unir los datos con la gráfica
-                 bar.data(data); // bind data to chart object
+                 bar.data(initialData); // bind data to chart object
                  // Con una selección sobre el contenedor de la gráfica,
                  // se llama al método call(bar) para dibujar la gráfica.
                  d3.select("#chart")
                      .call(bar); // Draw chart in selected div
              });
       function actualiza(){
-          currentRegion ++;
-          newData = allData.filter(function(el){
-              return el.zona == "Peninsula";})
+          //currentRegion ++;
+          newData = data.filter(function(el){
+              return el.region == "Noreste";})
           // Para actualizar la gráfica, simplemente se llama a data() con
           // los nuevos datos.
           bar.data(newData);

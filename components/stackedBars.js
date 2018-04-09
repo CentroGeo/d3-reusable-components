@@ -48,7 +48,7 @@ function stackedBarChart(){
             yLine.domain([0, Math.max(...maxVals)]).nice();
             
 
-            var valuelines = []
+            var valuelines = [];
             lineVariables.forEach(function(v){
                 valuelines.push(d3.line()
                                 .x(function(d) {
@@ -127,7 +127,7 @@ function stackedBarChart(){
             yAxis = d3.axisLeft()
                 .tickSizeOuter(0)
                 .scale(yBar);
-            yLineAxis = d3.axisRight(yLine).tickFormat(d3.format(rightAxisFormat));
+            
 
             // append x axis
             svg.append("g")
@@ -141,6 +141,9 @@ function stackedBarChart(){
                 .attr("transform", "rotate(45)");
             
             if (lineVariables != null){
+                // create axis
+                yLineAxis = d3.axisRight(yLine)
+                    .tickFormat(d3.format(rightAxisFormat));
                 // append line (right side) axis 
                 svg.append("g")
                     .attr("class", "axis-right axisRed")
@@ -211,7 +214,7 @@ function stackedBarChart(){
                 valuelines.forEach(function (valueline, i){
                     svg.append("path")
                         .data([data])
-                        .attr("class", "line")
+                        .attr("class", "line" + i.toString())
                         .style("stroke", "steelblue")
                         .attr("fill", "none")
                         .attr("d", valueline);
@@ -294,8 +297,8 @@ function stackedBarChart(){
             updateData = function(){
                 var stackedData = getStackedBarData(data, stackVariables);
                 
-                x.domain(getxDomain(stackedData));
-                y.domain(getyDomain(stackedData));
+                xBar.domain(getxDomain(stackedData));
+                yBar.domain(getyDomain(stackedData));
 
                 var barsUpdate = d3.select(".bars").selectAll(".stack")
                     .data(stackedData, function(d){return d.id;}),
@@ -324,27 +327,33 @@ function stackedBarChart(){
                     .append("rect")
                     .transition(t)
                     .attr("class", "bar")
-                    .attr("x", function(d) {return x(d.name);})
-                    .attr("y", function(d, i) {return y(d.end);})
+                    .attr("x", function(d) {return xBar(d.name);})
+                    .attr("y", function(d, i) {return yBar(d.end);})
                     .attr("fill", function(d,i) {return stackColors[i];})
-                    .attr("width", x.bandwidth())
-                    .attr("height", function(d,i) {return y(d.start) - y(d.end);});
+                    .attr("width", xBar.bandwidth())
+                    .attr("height", function(d,i) {
+                        return yBar(d.start) - yBar(d.end);
+                    });
 
                 barsUpdate.selectAll("rect")
                     .transition(t)
-                    .attr("x", function(d) {return x(d.name);})
-                    .attr("y", function(d, i) {return y(d.end);})
+                    .attr("x", function(d) {return xBar(d.name);})
+                    .attr("y", function(d, i) {return yBar(d.end);})
                     .attr("fill", function(d,i) {return stackColors[i];})
-                    .attr("width", x.bandwidth())
-                    .attr("height", function(d,i) {return y(d.start) - y(d.end);})
+                    .attr("width", xBar.bandwidth())
+                    .attr("height", function(d,i) {
+                        return yBar(d.start) - yBar(d.end);
+                    })
                     .attr("stroke-dasharray", function(d, i){
                         if(d.id == -1){
                             if (i == 1){ // if top bar
-                                return (x.bandwidth() + y(d.start) - y(d.end) +
-                                        ", " + (x.bandwidth()));
+                                return (xBar.bandwidth() +
+                                        yBar(d.start) - yBar(d.end) +
+                                        ", " + (xBar.bandwidth()));
                             } else if (i == 0){ //if bottom bar
-                                return ("0, " + x.bandwidth() + ", " +
-                                        2 * (y(d.start) - y(d.end) + (x.bandwidth())));
+                                return ("0, " + xBar.bandwidth() + ", " +
+                                        2 * (yBar(d.start) - yBar(d.end) +
+                                             (xBar.bandwidth())));
                             }
                         } else{
                             return "none";
@@ -363,6 +372,76 @@ function stackedBarChart(){
                     .transition(t)
                     .style('opacity', 0)
                     .remove();
+
+                if (lineVariables != null){
+
+                   
+
+                    var maxVals = [];
+                    lineVariables.forEach(function(v){
+                        maxVals.push(d3.max(data, function(d){
+                            return d[v]
+                        }))
+                    });
+                    yLine.domain([0, Math.max(...maxVals)]).nice();
+                    xLine.domain(data.map(function(d) { return d[displayName]; }));
+                    var valuelines = [];
+                    lineVariables.forEach(function(v){
+                        valuelines.push(d3.line()
+                                        .x(function(d) {
+                                            return xLine(d[displayName]);
+                                        })
+                                        .y(function(d) {
+                                            return yLine(d[v]);
+                                        })
+                                       ) 
+                    });
+
+                    yLineAxisUpdate = d3.select(".axis-right.axisRed");
+                    yLineAxisUpdate
+                        .transition(t)
+                        .call(yLineAxis);
+
+                    valuelines.forEach(function(v,i){
+                        var lineUpdate = d3.selectAll("path.line" + i.toString())
+                            .data([data])
+                            .transition(transitionTime)
+                            .attr("d", valuelines[i]);
+                        
+                        var points = svg.selectAll("circle.point")
+                            .data(data, function(d){ return d[id] + i.toString(); });
+
+                        points
+                            .transition(transitionTime)
+                            .attr("cx", function(d){
+                                return xLine(d[displayName]);
+                            })
+                            .attr("cy", function(d){
+                                return yLine(d[lineVariables[i]]);
+                            });
+
+                        points.enter()
+                            .append("circle")
+                            .transition(transitionTime)
+                            .attr("class", "point")
+                            .style("stroke", "crimson")
+                            .style("stroke-width", 3)
+  		            .style("fill", "none")
+                            .attr("cx", function(d){
+                                return xLine(d[displayName]);
+                            })
+                            .attr("cy", function(d){
+                                return yLine(d[lineVariables[i]]);
+                            })
+                            .attr("r", function(d){
+                                return 2.5;
+                            });
+                        
+                        points.exit().transition(transitionTime).remove();                 
+                        
+                    });
+                    
+                }
             }
         });
     }
