@@ -26,12 +26,15 @@
       // displayName (string) La columna con los nombres para el eje x
       // id Un identificador único para bcada fila
       var bar = stackedBarChart()
-          .width(400)
+          .width(600)
           .height(400)
+          .margin({top: 40, right: 60, bottom: 60, left: 60})
           .stackVariables(["Pop with bachelor",
                            "Pop with grad"])
           .lineVariables(["Percentage bachelor", "Percentage grad"])
           .displayName("name")
+          .barAxisLabel("Population")
+          .legend({title: 'IKOs', translateX: -70, translateY: 0})
           .id("name");
           
 

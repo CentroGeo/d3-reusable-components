@@ -194,7 +194,7 @@ body {
     font-size: 11px;
 }
 
-.axis--y path {
+.axis--y path, .axis-right  path{
     stroke: var(--main-text-color); 
 }
 

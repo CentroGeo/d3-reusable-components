@@ -8,8 +8,10 @@ function stackedBarChart(){
         //margin = {top: 100, right: 30, bottom: 30, left: 45},
         stackColors = ['#d8b365','#5ab4ac'], // colour scheme
         lineColors = d3.scaleOrdinal(d3.schemeCategory10),
+        pointColors = d3.scaleOrdinal(d3.schemeCategory10),
         stackVariables, // Which variables to stack in bars
         lineVariables = null, // list of variables to display as lines
+        barAxisLabel = "",
         id,  // variable in data to use as identifier
         displayName, // variable in data to use as x axis labels
         transitionTime = 250,
@@ -148,7 +150,14 @@ function stackedBarChart(){
                 svg.append("g")
                     .attr("class", "axis-right axisRed")
                     .attr("transform", "translate( " + width + ", 0 )")
-                    .call(yLineAxis);
+                    .call(yLineAxis.ticks())
+                    // .append("text")
+                    // .attr("x", 2)
+                    // .attr("y", yLine(yLine.ticks().pop()))
+                    // .attr("dy", "-2em")
+                    // .attr("dx", "-2em")
+                    // .attr("text-anchor", "start")
+                    // .text("barAxisLabel");
             }
             
             // append bars (left side) axis
@@ -161,7 +170,7 @@ function stackedBarChart(){
                 .attr("dy", "-2em")
                 .attr("dx", "-2em")
                 .attr("text-anchor", "start")
-                .text("Degree");
+                .text(barAxisLabel);
             
             // g element to contain bars
             svg.append("g").attr("class", "bars"); 
@@ -215,7 +224,9 @@ function stackedBarChart(){
                     svg.append("path")
                         .data([data])
                         .attr("class", "line" + i.toString())
-                        .style("stroke", "steelblue")
+                        .style("stroke", function(d){
+                            return lineColors(i)
+                        })
                         .attr("fill", "none")
                         .attr("d", valueline);
 
@@ -228,7 +239,9 @@ function stackedBarChart(){
                         .append("circle")
                         .attr("id", (d)=> d[id] + i.toString())
                         .attr("class", "point")
-                        .style("stroke", "crimson")
+                        .style("stroke", function(d){
+                            return pointColors(i)
+                        })
                         .style("stroke-width", 3)
   		        .style("fill", "none")
                         .attr("cx", function(d){
@@ -271,7 +284,7 @@ function stackedBarChart(){
                 
                 // Create rectangles markers
                 barLegend.selectAll('rect')
-                    .data(legend.items.reverse())
+                    .data(stackVariables.reverse())
                     .enter()
                     .append("rect")
                     .attr("x", width - 55)
@@ -282,7 +295,7 @@ function stackedBarChart(){
                 
                 // Create labels
                 barLegend.selectAll('text')
-                    .data(legend.items.reverse())
+                    .data(stackVariables.reverse())
                     .enter()
                     .append("text")
                     .attr("x", width - 40)
@@ -292,6 +305,51 @@ function stackedBarChart(){
                     .attr("dy", ".75em")
                     .attr("text-anchor", "start")
                     .text(function(d) { return d; });
+
+                if (lineVariables != null){
+                    
+                    barLegend.selectAll('line')
+                        .data(lineVariables.reverse())
+                        .enter()
+                        .append("path")
+                        .attr("d", function(d,i){
+                            return "m " + (width - 55) + " " + (i * 20 + 65) +
+                                " l 10 0"
+                        })
+                        .attr("stroke", function(d, i){
+                            return lineColors(i);
+                        })
+                    
+                    barLegend.selectAll("circle")
+                    .data(lineVariables.reverse())
+                        .enter()
+                        .append("circle")
+                        .attr("cx", function(d,i){
+                            return (width -50);
+                        })
+                        .attr("cy", function(d,i){
+                            return (i * 20 + 65);
+                        })
+                        .attr("r", 2.5)
+                        .attr("x", width - 55)
+                    // TODO: The start point must be calculated
+                        .attr("y", function(d, i){return i * 20 + 60; })
+                        .attr("fill", function(d, i){ return lineColors(i);})
+
+                    barLegend.selectAll('text-line')
+                        .data(lineVariables.reverse())
+                        .enter()
+                        .append("text")
+                        .attr("x", width - 40)
+                        .attr("y", function(d, i){return i * 20 + 60; })
+                        .attr("font-size", "11px")
+                        .attr("fill", "#737373")
+                        .attr("dy", ".75em")
+                        .attr("text-anchor", "start")
+                        .text(function(d) { return d; });
+
+                }
+                
             }
 
             updateData = function(){
@@ -406,6 +464,9 @@ function stackedBarChart(){
                         var lineUpdate = d3.selectAll("path.line" + i.toString())
                             .data([data])
                             .transition(transitionTime)
+                            .style("stroke", function(d){
+                                return lineColors(i)
+                            })
                             .attr("d", valuelines[i]);
                         
                         var points = svg.selectAll("circle.point")
@@ -424,7 +485,9 @@ function stackedBarChart(){
                             .append("circle")
                             .transition(transitionTime)
                             .attr("class", "point")
-                            .style("stroke", "crimson")
+                            .style("stroke", function(d){
+                                return pointColors(i)
+                            })
                             .style("stroke-width", 3)
   		            .style("fill", "none")
                             .attr("cx", function(d){
@@ -505,6 +568,30 @@ function stackedBarChart(){
     chart.lineVariables = function(value) {
         if (!arguments.length) return lineVariables;
         lineVariables = value;
+        return chart;
+    };
+
+    chart.lineColors = function(value) {
+        if (!arguments.length) return lineColors;
+        lineColors = value;
+        return chart;
+    };
+
+    chart.pointColors = function(value) {
+        if (!arguments.length) return pointColors;
+        pointColors = value;
+        return chart;
+    };
+
+    chart.stackColors = function(value) {
+        if (!arguments.length) return stackColors;
+        stackColors = value;
+        return chart;
+    };
+
+    chart.barAxisLabel = function(value) {
+        if (!arguments.length) return barAxisLabel;
+        barAxisLabel = value;
         return chart;
     };
 
