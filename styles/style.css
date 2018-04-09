@@ -189,7 +189,7 @@ body {
     fill: var(--main-text-color);
 }
 
-.axis {
+.axis, .axis-right {
     font-family: "DINMedium";
     font-size: 11px;
 }
