@@ -194,11 +194,11 @@ body {
     font-size: 11px;
 }
 
-.axis--y path, .axis-right  path{
+.axis--y path, .axis-right path {
     stroke: var(--main-text-color); 
 }
 
-.axis--y text {
+.axis--y text, .axis-right text {
     fill: var(--main-text-color); 
 }
  
