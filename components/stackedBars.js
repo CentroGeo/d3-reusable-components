@@ -284,7 +284,7 @@ function stackedBarChart(){
                 
                 // Create rectangles markers
                 barLegend.selectAll('rect')
-                    .data(stackVariables.reverse())
+                    .data(legend.itemsBar.reverse())
                     .enter()
                     .append("rect")
                     .attr("x", width - 55)
@@ -295,7 +295,7 @@ function stackedBarChart(){
                 
                 // Create labels
                 barLegend.selectAll('text')
-                    .data(stackVariables.reverse())
+                    .data(legend.itemsBar.reverse())
                     .enter()
                     .append("text")
                     .attr("x", width - 40)
@@ -309,7 +309,7 @@ function stackedBarChart(){
                 if (lineVariables != null){
                     
                     barLegend.selectAll('line')
-                        .data(lineVariables.reverse())
+                        .data(legend.itemsLine.reverse())
                         .enter()
                         .append("path")
                         .attr("d", function(d,i){
@@ -321,7 +321,7 @@ function stackedBarChart(){
                         })
                     
                     barLegend.selectAll("circle")
-                    .data(lineVariables.reverse())
+                    .data(legend.itemsLine.reverse())
                         .enter()
                         .append("circle")
                         .attr("cx", function(d,i){
