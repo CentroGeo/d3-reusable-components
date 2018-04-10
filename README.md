@@ -51,13 +51,73 @@ bar.data(newData);
 Internamente la implementación se encarga de actualizar el dibujo, manejar los nuevos elementos, eliminar los que
 ya no están presentes (la unión se hace implícitamente a trvés de la propiedad `id`).
 
+## Propiedades generales
+
+Todas las gráficas exponen las siguientes interfases de configuración:
+
+- `width`: ancho en pixeles del svg
+- `height`: altura en pixeles del svg
+- `margin`: `{top: 40, right: 75, bottom: 60, left: 75}` objeto con los tamaños en pixeles de los márgenes
+- `transitionTime`: duración en milisegundos de las transiciones al actualizar los datos
+- `data`: Array de filas de datos
+- `displayName`: Nombre del campo que se usará como etiquetas del eje x
+
 ## Gráfica de _Stacked Bars_
 
-Representa series de datos como _stacks_ verticales sobre una gráfica de barras. En barras.html está el ejemplo de uso 
+Representa series de datos como _stacks_ verticales sobre una gráfica de barras. Ofrece la posibilidad de agregar variables para graficarlas como líneas con una escala diferente.
+
+### Configuración
+
+`stackVariables`: Array con los nombres de las variables a usarse en el stack
+
+`id`: Nombre del campo que se usará como identificador de cada serie de datos
+
+`displayName`: Nombre del campo que se usará como etiquetas del eje x
+
+`lineVariables`: Array con los nombres de los campos que serán desplegados como líneas en la gráfica
+
+`stackColors`: función que regresa los colores para cada elemento del stack, por ejemplo: ` d3.scaleOrdinal(d3.schemeCategory10)`
+
+`lineColors`: función que regresa los colores para cada linea, por ejemplo: ` d3.scaleOrdinal(d3.schemeCategory10)`
+
+`pointColors`: función que regresa los colores para los puntos de las líneas (uno por serie), por ejemplo: ` d3.scaleOrdinal(d3.schemeCategory10)`
+
+`legendContainer`: id del elemento en donde se va a desplegar la leyenda
+
+`barAxisLabel`: Etiqueta para el eje de la escala de las barras
+
+`lineAxisLabel`: Etiqueta para eleje de las líneas
+
+
+
+En barras.html está el ejemplo de uso 
 y opciones de configuración.
 
 
 ## Gráfica de Radar
 
+script: stackedBars.js
+
 Representa series de datos como _paths_ en una malla circular. En radar está el ejemplo de uso 
 y opciones de configuración.
+
+### Configuración
+
+`maxValue`: Valor máximo para los ejes radiales.
+
+`levels`: Número de circulos concéntricos
+
+`format`: string de `d3.format`con el formato para desplegar las etiquetas de los ejes.
+
+`color`: función que regresa los colores para cada linea, por ejemplo: ` d3.scaleOrdinal(d3.schemeCategory10)`.
+
+`legend`: `{ title: '', translateX: 100, translateY: 0 }` objeto de configuración para la leyenda. Controla el título y la posición.
+
+`highlight`: controla la serie que debe resaltarse (línea más gruesa). Se puede llamar en cualquier momento.
+
+
+## Grafica de barras agrupadas 
+
+script: barLineChart.js
+
+Despliega series de datos como barras agrupadas, permite agregar líneas para series de datos.
