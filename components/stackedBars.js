@@ -358,8 +358,8 @@ function stackedBarChart(){
 
                 var barsUpdate = selection.select(".bars").selectAll(".stack")
                     .data(stackedData, function(d){return d.id;}),
-                    xAxisUpdate = d3.select(".axis--x"),
-                    yAxisUpdate = d3.select(".axis--y");
+                    xAxisUpdate = selection.select(".axis--x"),
+                    yAxisUpdate = selection.select(".axis--y");
 
                 yAxisUpdate.transition(t).call(yAxis);
                 
