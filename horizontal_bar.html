@@ -5,7 +5,7 @@
     <link href="styles/style.css" rel="stylesheet">
   </head>
   <body>
-    <button type="button" onclick="actualiza()">actualiza</button>
+    <button type="button" onclick="highlight()">Highlight</button>
     <div id="chart"> </div>
     <div id="explanation">
       <h1>Ejemplo de uso de la gráfica de Stacked Bars</h1>
@@ -57,14 +57,11 @@
                  d3.select("#chart")
                      .call(bar); // Draw chart in selected div
              });
-      // function actualiza(){
-      //     currentRegion ++;
-      //     newData = allData.filter(function(el){
-      //         return el.zona == "Peninsula";})
-      //     // Para actualizar la gráfica, simplemente se llama a data() con
-      //     // los nuevos datos.
-      //     bar.data(newData);
-      // }
+      function highlight(){
+          //console.log("heeeey")
+          //bar.highlightValue("CEO")
+          bar.highlight("CEO");
+       }
     </script>
 
   </body>

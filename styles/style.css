@@ -224,3 +224,7 @@ body {
 .axis .legend {
     fill: var(--main-text-color);
 }
+
+.horizontal-bar{
+    fill: steelblue;
+}

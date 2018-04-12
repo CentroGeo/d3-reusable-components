@@ -264,18 +264,11 @@ function barLineChart(){
         return chart;
     };
     
-    chart.lineVariables = function(value) {
-        if (!arguments.length) return lineVariables;
-        lineVariables = value;
+    chart.barsVariable = function(value) {
+        if (!arguments.length) return barsVariable;
+        barsVariable = value;
         return chart;
     };
-
-    chart.barsVariables = function(value) {
-        if (!arguments.length) return barsVariables;
-        barsVariables = value;
-        return chart;
-    };
-
     
     chart.displayName = function(value) {
         if (!arguments.length) return displayName;
@@ -290,9 +283,9 @@ function barLineChart(){
         return chart;
     };    
 
-    chart.color = function(value) {
-        if (!arguments.length) return color;
-        color = value;
+    chart.barColor = function(value) {
+        if (!arguments.length) return barColor;
+        barColor = value;
         return chart;
     };
 
