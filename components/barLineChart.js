@@ -119,7 +119,12 @@ function barLineChart(){
             g.append("g")
                 .attr("transform", "translate(0," + height + ")")
                 .attr("class", "x-axis")
-                .call(xAxis);
+                .call(xAxis)
+                .selectAll("text")    
+                .style("text-anchor", "start")
+                .attr("dx", "0em")
+                .attr("dy", "2em")
+                .attr("transform", "rotate(45)");
 
             var leftAxis = d3.axisLeft(yBar).tickFormat(d3.format(leftAxisFormat));
             var rightAxis = d3.axisRight(yLine).tickFormat(d3.format(rightAxisFormat));
@@ -169,7 +174,12 @@ function barLineChart(){
                     .call(rightAxis);
                 xAxisUpdate
                     .transition(transitionTime)
-                    .call(xAxis);
+                    .call(xAxis)
+                    .selectAll("text")    
+                    .style("text-anchor", "start")
+                    .attr("dx", "0em")
+                    .attr("dy", "2em")
+                    .attr("transform", "rotate(45)");
 
                 var barGroupsEnter = barGroups.enter()
                     .append("g")
@@ -263,11 +273,18 @@ function barLineChart(){
         return chart;
     };
     
-    chart.barsVariable = function(value) {
-        if (!arguments.length) return barsVariable;
-        barsVariable = value;
+    chart.lineVariables = function(value) {
+        if (!arguments.length) return lineVariables;
+        lineVariables = value;
         return chart;
     };
+
+    chart.barsVariables = function(value) {
+        if (!arguments.length) return barsVariables;
+        barsVariables = value;
+        return chart;
+    };
+
     
     chart.displayName = function(value) {
         if (!arguments.length) return displayName;
@@ -282,9 +299,9 @@ function barLineChart(){
         return chart;
     };    
 
-    chart.barColor = function(value) {
-        if (!arguments.length) return barColor;
-        barColor = value;
+    chart.color = function(value) {
+        if (!arguments.length) return color;
+        color = value;
         return chart;
     };
 
