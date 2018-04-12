@@ -36,7 +36,7 @@ function stackedBarChart(){
         
         // Scale the range of the data
         xBar.domain(data.map(function(d) {return d[displayName]; }));
-        yBar.domain(getxDomain).nice();
+        yBar.domain(getyDomain).nice();
 
         // valuelines for each line variable
         if(lineVariables != null){
@@ -130,7 +130,6 @@ function stackedBarChart(){
             yAxis = d3.axisLeft()
                 .tickSizeOuter(0)
                 .scale(yBar);
-            
 
             // append x axis
             svg.append("g")
@@ -348,9 +347,7 @@ function stackedBarChart(){
                         .attr("dy", ".75em")
                         .attr("text-anchor", "start")
                         .text(function(d) { return d; });
-
                 }
-                
             }
 
             updateData = function(){
@@ -359,7 +356,7 @@ function stackedBarChart(){
                 xBar.domain(getxDomain(stackedData));
                 yBar.domain(getyDomain(stackedData));
 
-                var barsUpdate = d3.select(".bars").selectAll(".stack")
+                var barsUpdate = selection.select(".bars").selectAll(".stack")
                     .data(stackedData, function(d){return d.id;}),
                     xAxisUpdate = d3.select(".axis--x"),
                     yAxisUpdate = d3.select(".axis--y");
@@ -376,7 +373,7 @@ function stackedBarChart(){
                 var t = barsUpdate.transition()
                     .duration(transitionTime);
 
-                var barsEnter= barsUpdate.enter()
+                var barsEnter = barsUpdate.enter()
                     .append("g")
                     .attr("id", function(d){return d.id;})
                     .attr("class", "stack")
@@ -433,8 +430,6 @@ function stackedBarChart(){
                     .remove();
 
                 if (lineVariables != null){
-
-                   
 
                     var maxVals = [];
                     lineVariables.forEach(function(v){
@@ -504,7 +499,6 @@ function stackedBarChart(){
                         points.exit().transition(transitionTime).remove();                 
                         
                     });
-                    
                 }
             }
         });
@@ -610,5 +604,4 @@ function stackedBarChart(){
     };
 
     return chart;
-
 }
