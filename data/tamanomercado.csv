@@ -1,0 +1,66 @@
+region,name,Labor market size,IKAs market,IKAs Percentage
+Megalopolis,Valle de México,7992219,1325734,0.165878087
+Megalopolis,Puebla,1127836,156580,0.138832242
+Megalopolis,Toluca,759957,95077,0.125108394
+Megalopolis,Cuernavaca,398753,50640,0.12699591
+Megalopolis,Pachuca,223664,36421,0.162838007
+Megalopolis,Tlaxcala,198575,27668,0.139332746
+Megalopolis,Cuautla,183450,14911,0.081281003
+Megalopolis,Tulancingo,92181,7619,0.082652607
+Megalopolis,Tula,75959,5400,0.071090983
+Megalopolis,Tianguistenco,59424,4936,0.083064082
+Northeast,Monterrey,1801287,284370,0.157870456
+Northeast,La Laguna,458349,63191,0.13786656
+Northeast,Saltillo,367100,54584,0.14868973
+Northeast,Reynosa,293138,23787,0.081146081
+Northeast,Matamoros,191274,19529,0.102099606
+Northeast,Nuevo Laredo,141597,15208,0.107403405
+Northeast,Monclova,125530,13872,0.110507448
+Northeast,Piedras Negras,70345,6038,0.085834103
+Center-west,Guadalajara,1980335,290149,0.14651511
+Center-west,Morelia,352567,62656,0.17771374
+Center-west,Tepic,190318,31702,0.16657384
+Center-west,Puerto Vallarta,185360,20497,0.110579413
+Center-west,Colima,153031,26088,0.170475263
+Center-west,Zamora,106300,9089,0.085503293
+Center-west,Manzanillo,81828,9759,0.119262355
+Center-west,Tecomán,59607,4960,0.083211703
+Center-west,Ocotlán,50243,4254,0.084668511
+Center-north,León,745695,85783,0.115037649
+Center-north,Querétaro,532607,89707,0.168430006
+Center-north,San Luis Potosí,465284,74346,0.159786281
+Center-north,Aguascalientes,420610,62120,0.147690259
+Center-north,Celaya,232309,23660,0.101847109
+Center-north,Irapuato,154922,19349,0.124895109
+Center-north,Zacatecas,127176,26687,0.209843052
+Center-north,San Francisco del Rincón,84691,5295,0.062521401
+Center-north,La Piedad,76828,6853,0.08919925
+Center-north,San Juan del Río,61524,9104,0.147974774
+Center-north,Salamanca,59978,7983,0.133098803
+Center-north,Moroleón,40710,2619,0.064333088
+Center-north,Lagos de Moreno,39871,4330,0.108600236
+Center-north,Rioverde,33739,4233,0.125463114
+Center-north,Guanajuato,32754,6367,0.194388472
+Center-north,San Miguel de Allende,29740,4255,0.143073302
+Center-north,Cortazar,5516,1969,0.356961566
+Yucatán peninsula,Mérida,451651,77717,0.172073127
+Yucatán peninsula,Cancún,349001,39531,0.113269016
+Yucatán peninsula,Campeche,118956,18707,0.157259827
+Yucatán peninsula,Solidaridad,112403,599,0.005329039
+Yucatán peninsula,Carmen,102458,16748,0.163462102
+Yucatán peninsula,Othón P. Blanco,89947,64,0.00071153
+Yucatán peninsula,Tulum,15796,111,0.007027095
+Northwest,Tijuana,743951,82501,0.110895744
+Northwest,Mexicali,392936,56584,0.144003095
+Gulf-west,Villahermosa,313041,53965,0.172389559
+Gulf-west,Coatzacoalcos,152366,17131,0.11243322
+Gulf-west,Minatitlán,118582,10438,0.088023477
+Gulf-west,Cárdenas,72584,6699,0.092293067
+Gulf-west,Acayucan,17340,1465,0.084486736
+National,Megalopolis,11112018,1724986,0.15523607
+National,Northeast,3448620,480579,0.139354002
+National,Center-west,3159589,459154,0.1453208
+National,Center-north,3143954,434660,0.138252659
+National,Yucatán peninsula,1240212,153477,0.123750617
+National,Northwest,1136887,139085,0.122338456
+National,Gulf-east,673913,89698,0.133100267

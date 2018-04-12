@@ -34,15 +34,15 @@
           .id("name");
           
 
-      d3.csv("data/bars_line.csv",
+      d3.csv("data/tamanomercado.csv",
              function(error, vars){
                  if (error) throw error;
                  // Parse data as numbers
                  data = [];
                  vars.forEach(function(d) {
                      data.push({
-                         region: d["Region"],
-                         name: d["Name"],
+                         region: d["region"],
+                         name: d["name"],
                          "Labor market size": +d["Labor market size"], 
                          "IKAs market": +d["IKAs market"],
                          "IKAs Percentage": +d["IKAs Percentage"]
@@ -61,12 +61,24 @@
                      .call(bar); // Draw chart in selected div
              });
       
-      function actualiza(){
-           newData = data.filter(function(el){
-               return el.region == "Megalópolis";})
+      var idToName = {
+        1 : "Northeast",
+        2 : "Center-west",
+        3 : "Megalopolis",
+        4 : "Northwest",
+        5 : "Gulf-east",
+        6 : "Center-north",
+        7 : "Yucatán peninsula"
+    };
+
+    function actualiza(){
+        currentRegion ++;
+        newData = data.filter(function(el){
+           return el.region === idToName[currentRegion];
+        });
            // Para actualizar la gráfica, simplemente se llama a data() con
            // los nuevos datos.
-           bar.data(newData);
+        bar.data(newData);
       }
     </script>
 

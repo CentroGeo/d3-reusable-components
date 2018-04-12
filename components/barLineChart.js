@@ -15,7 +15,6 @@ function barLineChart(){
         legend = { title: '', translateX: 100, translateY: 0 },
         legendContainer = 'legendZone',
         updateData;
-    
 
     function chart(selection){
 
@@ -71,7 +70,7 @@ function barLineChart(){
                 })
                 .attr("transform", function(d) {
                     return "translate(" + xBar(d[displayName]) + ",0)"; })
-  	        .selectAll("rect")
+                .selectAll("rect")
                 .data(function(d) {
                     return barsVariables.map(function(key) {
                         return {key: key, value: d[key]};
@@ -104,7 +103,7 @@ function barLineChart(){
                 .attr("class", "point")
                 .style("stroke", "crimson")
                 .style("stroke-width", 3)
-  		.style("fill", "none")
+                .style("fill", "none")
                 .attr("cx", function(d){
                     return xLine(d[displayName]);
                 })
@@ -154,7 +153,7 @@ function barLineChart(){
                     .x(function(d) { return xLine(d[displayName]); })
                     .y(function(d) { return yLine(d[lineVariables[0]]); });
 
-                var barGroups = d3.select(".g-bar").selectAll(".bars")
+                var barGroups = selection.select(".g-bar").selectAll(".bars")
                     .data(data, function(d){return d[id]});
 
                 //console.log(barGroups.data())
@@ -179,7 +178,7 @@ function barLineChart(){
                     })
                     .attr("transform", function(d) {
                         return "translate(" + xBar(d[displayName]) + ",0)"; })
-  	            .selectAll("rect")
+                    .selectAll("rect")
                     .data(function(d) {
                         return barsVariables.map(function(key) {
                             return {key: key, value: d[key]};
@@ -187,7 +186,7 @@ function barLineChart(){
                     })
                     .enter()
                     .append("rect")
-                    .attr("class", "bar")
+                    .attr("class", "bars")
                     .attr("id", function(d){ return d.key;})
                     .style("stroke", "none")
                     .attr("x", function(d){ return xGroups(d.key); })
@@ -221,7 +220,7 @@ function barLineChart(){
                     .attr("class", "point")
                     .style("stroke", "crimson")
                     .style("stroke-width", 3)
-  		    .style("fill", "none")
+                    .style("fill", "none")
                     .attr("cx", function(d){
                         return xLine(d[displayName]);
                     })
